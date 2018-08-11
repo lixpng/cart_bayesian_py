@@ -1,0 +1,10 @@
+low,low,5more,more,big,low,unacc
+low,low,5more,more,small,low,unacc
+low,low,5more,more,med,low,unacc
+low,low,5more,more,small,med,acc
+low,low,5more,more,med,med,good
+low,low,5more,more,big,med,good
+low,low,5more,more,small,high,good
+low,low,5more,more,med,high,vgood
+low,low,5more,more,big,high,vgood
+low,low,5more,4,big,high,vgood

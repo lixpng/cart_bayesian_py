@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>数据挖掘</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/static/vue.min.js"></script>
+    <link href="/static/bulma.css" rel="stylesheet">
+    <style>
+        .table {
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" style="text-align: center">
+        <div style="text-align: left;width: 337px;margin: 20px auto 20px auto;">
+            <div class="field is-horizontal">
+                <label class="label">训练数据：</label>
+                <div class="control">
+                    <input ref="training_data" type="file">
+                </div>
+            </div>
+            <div class="field is-horizontal">
+                <label class="label">测试数据：</label>
+                <div class="control">
+                    <input ref="test_data" type="file">
+                </div>
+            </div>
+            <button @click='submit' class="button is-link">提交</button>
+        </div>
+        <div v-if="show">
+            <div class="columns">
+                <div class="column">
+                    cart测试结果:
+                    <table class="table is-bordered">
+                        <thead>
+                            <tr>
+                                <th>类别</th>
+                                <th>数量</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(item, key) in result.cart.test_result">
+                                <td>{{key}}</td>
+                                <td>{{item}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="column">
+                    bayesian测试结果:
+                    <table class="table is-bordered">
+                        <thead>
+                            <tr>
+                                <th>类别</th>
+                                <th>数量</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(item, key) in result.bayesian.test_result">
+                                <td>{{key}}</td>
+                                <td>{{item}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="column">
+                    实际结果:
+                    <table class="table is-bordered">
+                        <thead>
+                            <tr>
+                                <th>类别</th>
+                                <th>数量</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(item, key) in result.bayesian.real_result">
+                                <td>{{key}}</td>
+                                <td>{{item}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="columns">
+                
+                <div class="column">
+                    对比:
+                    <table class="table is-bordered">
+                        <thead>
+                            <tr>
+                                <th>方法</th>
+                                <th>测试个数</th>
+                                <th>错误个数</th>
+                                <th>正确率</th>
+                                <th>执行时间(s)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>CART</td>
+                                <td>{{result.cart.test_count}}</td>
+                                <td>{{result.cart.error_count}}</td>
+                                <td>{{result.cart.success_rate}}</td>
+                                <td>{{result.cart.time}}</td>
+                            </tr>
+                            <tr>
+                                <td>bayesian</td>
+                                <td>{{result.bayesian.test_count}}</td>
+                                <td>{{result.bayesian.error_count}}</td>
+                                <td>{{result.bayesian.success_rate}}</td>
+                                <td>{{result.bayesian.time}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const vm = new Vue({
+            el: '#app',
+            created() {
+            },
+            data() {
+                return {
+                    training_data: '',
+                    test_data: '',
+                    show:false,
+                    result:{
+                        cart: {
+                            error_count: 0,
+                            real_result: {
+
+                            },
+                            success_rate: 0,
+                            test_result: {
+
+                            },
+                            time: 0
+                        },
+                        bayesian: {
+                            error_count: 0,
+                            real_result: {
+
+                            },
+                            success_rate: 0,
+                            test_result: {
+
+                            },
+                            time: 0
+                        }
+                    }
+                }
+            },
+            methods: {
+                submit() {
+                    let formData = new FormData();
+                    formData.append('training_data', this.$refs.training_data.files[0]);
+                    formData.append('test_data', this.$refs.test_data.files[0]);
+                    fetch('./upload-data', {
+                        method: 'post',
+                        body: formData
+                    }).then(response => {
+                        return response.json()
+                    }).then(data => {
+                        this.result = data
+                        this.show = true
+                    });
+                }
+            }
+        })
+    </script>
+
+</body>
+</html>
